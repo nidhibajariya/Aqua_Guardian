@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supabase Connection Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border-left: 4px solid #667eea;
+            background: #f8f9fa;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #5568d3;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        .input-group {
+            margin: 15px 0;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        label {
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌊 AQUA Guardian - Supabase Connection Test</h1>
+        
+        <div class="test-section">
+            <h3>Step 1: Environment Check</h3>
+            <div id="envCheck"></div>
+            <button onclick="checkEnvironment()">Check Environment Variables</button>
+        </div>
+
+        <div class="test-section">
+            <h3>Step 2: Supabase Client Test</h3>
+            <div id="clientTest"></div>
+            <button onclick="testSupabaseClient()">Test Supabase Client</button>
+        </div>
+
+        <div class="test-section">
+            <h3>Step 3: Sign-Up Test</h3>
+            <div class="input-group">
+                <label>Test Email:</label>
+                <input type="email" id="testEmail" placeholder="test@example.com" value="test@example.com">
+            </div>
+            <div class="input-group">
+                <label>Test Password:</label>
+                <input type="password" id="testPassword" placeholder="minimum 6 characters" value="test123456">
+            </div>
+            <div class="input-group">
+                <label>Test Name:</label>
+                <input type="text" id="testName" placeholder="Test User" value="Test User">
+            </div>
+            <div id="signupTest"></div>
+            <button onclick="testSignup()">Test Sign-Up</button>
+        </div>
+
+        <div class="test-section">
+            <h3>Console Logs</h3>
+            <div id="logs"></div>
+        </div>
+    </div>
+
+    <script>
+        let supabaseClient = null;
+        const logs = [];
+
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            logs.push({ timestamp, message, type });
+            updateLogs();
+            console.log(`[${timestamp}] ${message}`);
+        }
+
+        function updateLogs() {
+            const logsDiv = document.getElementById('logs');
+            logsDiv.innerHTML = '<pre>' + logs.map(l => 
+                `[${l.timestamp}] ${l.type.toUpperCase()}: ${l.message}`
+            ).join('\n') + '</pre>';
+        }
+
+        function showStatus(elementId, message, isSuccess) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<div class="status ${isSuccess ? 'success' : 'error'}">${message}</div>`;
+        }
+
+        function showInfo(elementId, message) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<div class="status info">${message}</div>`;
+        }
+
+        function checkEnvironment() {
+            log('Checking environment variables...');
+            const envDiv = document.getElementById('envCheck');
+            
+            // Since we're in a static HTML file, we need to manually input these
+            const supabaseUrl = prompt('Enter your VITE_SUPABASE_URL:', 'https://hsoooexgsnxsvyfnwuef.supabase.co');
+            const supabaseKey = prompt('Enter your VITE_SUPABASE_ANON_KEY:');
+            
+            if (!supabaseUrl || !supabaseKey) {
+                showStatus('envCheck', '❌ Environment variables not provided', false);
+                log('Environment check failed: missing variables', 'error');
+                return;
+            }
+
+            // Store for later use
+            window.SUPABASE_URL = supabaseUrl;
+            window.SUPABASE_KEY = supabaseKey;
+
+            const keyLength = supabaseKey.length;
+            const keyPreview = supabaseKey.substring(0, 20) + '...' + supabaseKey.substring(keyLength - 10);
+            
+            let html = '<div class="status success">✅ Environment Variables Found</div>';
+            html += `<pre>SUPABASE_URL: ${supabaseUrl}\nSUPABASE_KEY: ${keyPreview}\nKey Length: ${keyLength} characters</pre>`;
+            
+            if (keyLength < 100) {
+                html += '<div class="status error">⚠️ WARNING: Anon key seems too short! Should be ~200+ characters</div>';
+                log(`Warning: Anon key is only ${keyLength} characters`, 'error');
+            } else {
+                log(`Environment check passed. Key length: ${keyLength}`, 'success');
+            }
+            
+            envDiv.innerHTML = html;
+        }
+
+        function testSupabaseClient() {
+            log('Testing Supabase client initialization...');
+            
+            if (!window.SUPABASE_URL || !window.SUPABASE_KEY) {
+                showStatus('clientTest', '❌ Please run Environment Check first', false);
+                return;
+            }
+
+            try {
+                const { createClient } = supabase;
+                supabaseClient = createClient(window.SUPABASE_URL, window.SUPABASE_KEY);
+                
+                showStatus('clientTest', '✅ Supabase client initialized successfully!', true);
+                log('Supabase client created successfully', 'success');
+                
+                // Test a simple query
+                supabaseClient.auth.getSession().then(({ data, error }) => {
+                    if (error) {
+                        log(`Session check error: ${error.message}`, 'error');
+                    } else {
+                        log('Session check successful', 'success');
+                    }
+                });
+                
+            } catch (error) {
+                showStatus('clientTest', `❌ Failed to initialize: ${error.message}`, false);
+                log(`Client initialization error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testSignup() {
+            log('Testing sign-up functionality...');
+            
+            if (!supabaseClient) {
+                showStatus('signupTest', '❌ Please initialize Supabase client first', false);
+                return;
+            }
+
+            const email = document.getElementById('testEmail').value;
+            const password = document.getElementById('testPassword').value;
+            const name = document.getElementById('testName').value;
+
+            if (!email || !password || !name) {
+                showStatus('signupTest', '❌ Please fill in all fields', false);
+                return;
+            }
+
+            showInfo('signupTest', '⏳ Testing sign-up...');
+            log(`Attempting sign-up for: ${email}`);
+
+            try {
+                const { data, error } = await supabaseClient.auth.signUp({
+                    email: email,
+                    password: password,
+                    options: {
+                        data: {
+                            name: name,
+                            role: 'Citizen'
+                        }
+                    }
+                });
+
+                if (error) {
+                    showStatus('signupTest', `❌ Sign-up failed: ${error.message}`, false);
+                    log(`Sign-up error: ${error.message}`, 'error');
+                    return;
+                }
+
+                if (data?.user) {
+                    let html = '<div class="status success">✅ Sign-up successful!</div>';
+                    html += '<pre>' + JSON.stringify({
+                        userId: data.user.id,
+                        email: data.user.email,
+                        emailConfirmed: data.user.email_confirmed_at !== null,
+                        metadata: data.user.user_metadata
+                    }, null, 2) + '</pre>';
+                    
+                    if (!data.user.email_confirmed_at) {
+                        html += '<div class="status info">📧 Please check your email to confirm your account</div>';
+                    }
+                    
+                    document.getElementById('signupTest').innerHTML = html;
+                    log(`Sign-up successful for user: ${data.user.id}`, 'success');
+                } else {
+                    showStatus('signupTest', '❌ No user data returned', false);
+                    log('Sign-up failed: no user data', 'error');
+                }
+
+            } catch (error) {
+                showStatus('signupTest', `❌ Exception: ${error.message}`, false);
+                log(`Sign-up exception: ${error.message}`, 'error');
+            }
+        }
+    </script>
+</body>
+</html>

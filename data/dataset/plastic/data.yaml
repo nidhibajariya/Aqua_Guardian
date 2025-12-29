@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 7
+names: ['bottle', 'can', 'foam', 'plastic', 'plastic bottle', 'stick', 'unknow']
+
+roboflow:
+  workspace: nidhi-abnoa
+  project: my-first-project-ynlq8-krqzt
+  version: 1
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/nidhi-abnoa/my-first-project-ynlq8-krqzt/dataset/1

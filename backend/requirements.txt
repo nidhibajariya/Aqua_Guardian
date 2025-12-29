@@ -1,0 +1,10 @@
+fastapi==0.110.0
+uvicorn[standard]==0.30.0
+python-dotenv==1.0.1
+supabase>=2.0.0
+sqlalchemy==2.0.30
+psycopg2-binary
+python-multipart==0.0.9
+pillow
+# tensorflow (Too large for Vercel Serverless - Backend will use Smart Heuristic Fallback)
+numpy

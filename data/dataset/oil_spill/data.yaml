@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 3
+names: ['rainbow', 'sheen', 'truecolor']
+
+roboflow:
+  workspace: oil-pollution
+  project: test-ka7p4
+  version: 1
+  license: Public Domain
+  url: https://universe.roboflow.com/oil-pollution/test-ka7p4/dataset/1

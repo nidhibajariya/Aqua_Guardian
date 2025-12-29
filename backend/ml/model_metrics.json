@@ -1,0 +1,34 @@
+{
+  "model_version": "1.0-lite",
+  "evaluation_date": "2025-11-30T19:33:45.239142",
+  "dataset_size": 572,
+  "overall_metrics": {
+    "accuracy": 0.777972027972028
+  },
+  "per_class_metrics": {
+    "clean": {
+      "precision": 0.8735632183908046,
+      "recall": 0.8085106382978723,
+      "f1_score": 0.8397790055248618,
+      "support": 94
+    },
+    "oil_spill": {
+      "precision": 0.7797619047619048,
+      "recall": 0.793939393939394,
+      "f1_score": 0.7867867867867868,
+      "support": 165
+    },
+    "plastic": {
+      "precision": 0.8277310924369747,
+      "recall": 0.9656862745098039,
+      "f1_score": 0.8914027149321267,
+      "support": 204
+    },
+    "sewage": {
+      "precision": 0.5189873417721519,
+      "recall": 0.3761467889908257,
+      "f1_score": 0.43617021276595747,
+      "support": 109
+    }
+  }
+}
