@@ -6,5 +6,5 @@ sqlalchemy==2.0.30
 psycopg2-binary
 python-multipart==0.0.9
 pillow
-# tensorflow (Too large for Vercel Serverless - Backend will use Smart Heuristic Fallback)
+tensorflow-cpu>=2.15.0
 numpy
