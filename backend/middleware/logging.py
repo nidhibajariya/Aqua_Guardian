@@ -10,6 +10,10 @@ from fastapi import Request
 from starlette.middleware.base import BaseHTTPMiddleware
 import traceback
 
+# Create logs directory if it doesn't exist at the very beginning
+import os
+os.makedirs('logs', exist_ok=True)
+
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
@@ -100,6 +104,3 @@ def log_api_error(endpoint: str, error: Exception):
         f"Traceback: {traceback.format_exc()}"
     )
 
-# Create logs directory if it doesn't exist
-import os
-os.makedirs('logs', exist_ok=True)

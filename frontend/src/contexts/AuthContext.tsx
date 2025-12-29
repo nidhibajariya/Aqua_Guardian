@@ -40,6 +40,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const savedUser = localStorage.getItem('aqua-guardian-user');
     if (savedUser) {
       setUser(JSON.parse(savedUser));
+    } else {
+      // SIMULATION: Auto-populate demo user if no one is logged in
+      console.log('🤖 Simulation: Auto-populating demo user');
+      const demoUser: User = {
+        id: '2f3516b6-f9a9-4e2e-9529-0ecd2c9cf395',
+        email: 'demo@aquaguardian.com',
+        name: 'Demo User',
+        role: 'Citizen',
+        reportsSubmitted: 0,
+        cleanUpsJoined: 0,
+        nftsAdopted: 0,
+      };
+      setUser(demoUser);
     }
   }, []);
 

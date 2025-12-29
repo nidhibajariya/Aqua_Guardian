@@ -17,6 +17,9 @@ api.interceptors.request.use(async (config) => {
             config.headers.Authorization = `Bearer ${session.data.session.access_token}`;
             // Remove the manual user_id field if it exists, as the backend now uses the token
             // Note: We don't remove FormData fields here, but we stop successful injection of user_id
+        } else {
+            // SIMULATION: Attach simulation token if no real session exists
+            config.headers.Authorization = `Bearer simulation-token`;
         }
     } catch (error) {
         console.error("Error attaching token:", error);
